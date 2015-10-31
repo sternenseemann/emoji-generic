@@ -31,8 +31,12 @@ emojiDataEntry = do
   level <- sumTypeField emojiLevels
   modifier <- sumTypeField emojiModifierStati
   sourceList <- sources
-  char '\t'
-  comment <- emojiComment
+
+  string "\t# "
+
+  version <- many (noneOf " ")
+  space >> char '(' >> manyTill anyChar (char ')') >> space
+  name <- manyTill anyChar (try lineTerminated)
 
   return . Right $ MkEmoji
     { _code           = code
@@ -40,8 +44,8 @@ emojiDataEntry = do
     , _emojiLevel     = level
     , _emojiModifier  = modifier
     , _emojiSources   = sourceList
-    , _name           = comment -- TODO
-    , _version        = comment -- TODO
+    , _name           = version
+    , _version        = name
     }
 
 sources :: Parser EmojiSources
