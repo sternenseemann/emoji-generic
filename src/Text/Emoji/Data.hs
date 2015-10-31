@@ -1,5 +1,5 @@
 {-|
-  Module:      Text.Emoji.DataParser
+  Module:      Text.Emoji.Data
   Description: Parser for the emoji-data file format
 
 This module defines the Parsec parser necessary
@@ -9,7 +9,7 @@ unicode consortium.
 
 
 {-# LANGUAGE OverloadedStrings #-}
-module Text.Emoji.DataParser where
+module Text.Emoji.Data where
 
 import           Text.Emoji.Types
 

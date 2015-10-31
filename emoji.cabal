@@ -17,7 +17,7 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:     Text.Emoji.Types
-                       Text.Emoji.DataParser
+                       Text.Emoji.Data
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base
