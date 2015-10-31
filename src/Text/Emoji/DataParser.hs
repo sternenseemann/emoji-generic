@@ -1,3 +1,13 @@
+{-|
+  Module:      Text.Emoji.DataParser
+  Description: Parser for the emoji-data file format
+
+This module defines the Parsec parser necessary
+to parse the emoji-data.txt file issued by the
+unicode consortium.
+-}
+
+
 {-# LANGUAGE OverloadedStrings #-}
 module Text.Emoji.DataParser where
 
@@ -12,18 +22,21 @@ import           Text.Parsec
 import           Text.Parsec.String
 import           Numeric             (readHex)
 
+-- | Parses the entire emoji-data.txt file.
+-- Left String is a comment line.
+-- Right Emoji is a line describing an emoji character.
 emojiDataFile :: Parser [Either String Emoji]
 emojiDataFile = many $ emojiCommentLine <|> emojiDataEntry
 
+-- | Parsers an comment line.
 emojiCommentLine :: Parser (Either String Emoji)
-emojiCommentLine = Left <$> emojiComment
-
-emojiComment :: Parser String
-emojiComment = do
+emojiCommentLine = do
   string "#"
   r <- manyTill anyChar (try lineTerminated)
-  return r
+  return $ Left r
 
+-- | Parsers an emoji data entry and returns a
+-- Left Emoji using all the information given.
 emojiDataEntry :: Parser (Either String Emoji)
 emojiDataEntry = do
   code <- fst . head . readHex . filter (not . isSpace) <$> field hexDigit
@@ -48,18 +61,25 @@ emojiDataEntry = do
     , _version        = name
     }
 
+-- | Parses the emoji sources field.
+-- TODO: Handle NA correctly (no problem right now though).
 sources :: Parser EmojiSources
 sources = catMaybes .
   map (flip lookup (emojiSources)) .
   splitOn " " . dropAround isSpace <$>
   many (oneOf (map (head . fst) emojiSources) <|> char ' ')
 
+-- | Matches the separator sequence.
 separator :: Parser String
 separator = string ";\t" <|> string " ;\t"
 
+-- | Uses a parser association list to convert
+-- to a sum type.
 sumType :: ParserAssoc a -> Parser a
 sumType assocs = choice [r <$ (try . string $ s) | (s,r) <- assocs]
 
+-- | Identical to sumType except that it matches
+-- a separator afterwards.
 sumTypeField :: ParserAssoc a -> Parser a
 sumTypeField assocs = do
   res <- sumType assocs
