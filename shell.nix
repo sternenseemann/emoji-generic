@@ -4,15 +4,15 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, attoparsec, base, bytestring, parsec, split
-      , stdenv, text
+  f = { mkDerivation, base, bytestring, parsec, split, stdenv, text
+      , utf8-light
       }:
       mkDerivation {
         pname = "emoji";
         version = "0.1.0.0";
         src = ./.;
         libraryHaskellDepends = [
-          attoparsec base bytestring parsec split text
+          base bytestring parsec split text utf8-light
         ];
         description = "Emoji name expander for different string types";
         license = stdenv.lib.licenses.gpl3;

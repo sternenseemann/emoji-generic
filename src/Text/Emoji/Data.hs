@@ -39,7 +39,7 @@ emojiCommentLine = do
 -- Left Emoji using all the information given.
 emojiDataEntry :: Parser (Either String Emoji)
 emojiDataEntry = do
-  code <- fst . head . readHex . filter (not . isSpace) <$> field hexDigit
+  code <- map (fst . head . readHex) . splitOn " " <$> field hexDigit
   style <- sumTypeField emojiStyles
   level <- sumTypeField emojiLevels
   modifier <- sumTypeField emojiModifierStati

@@ -8,7 +8,7 @@
 module Text.Emoji.Types where
 
 import           Data.Char (toLower)
-import           GHC.Word  (Word64 ())
+import           GHC.Word  (Word32 ())
 
 -- | Represents the default style
 -- an emoji is displayed as.
@@ -86,7 +86,7 @@ type EmojiSources = [EmojiSource]
 -- | Emoji holds all the information about an
 -- emoji provided by emoji-data.txt
 data Emoji = MkEmoji
-  { _code          :: Word64              -- ^ The code of the unicode character.
+  { _code          :: [Word32]            -- ^ The code of the unicode character.
   , _defaultStyle  :: EmojiStyle          -- ^ The default display style.
   , _emojiLevel    :: EmojiLevel          -- ^ Commonness for the character.
   , _emojiModifier :: EmojiModifierStatus -- ^ Wether the emoji is a modifier.
