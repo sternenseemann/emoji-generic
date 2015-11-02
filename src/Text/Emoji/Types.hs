@@ -7,7 +7,7 @@
 module Text.Emoji.Types where
 
 import           Data.Char (toLower)
-import           GHC.Word  (Word32 ())
+import           Data.Word (Word32 ())
 
 -- | Represents the default style
 -- an emoji is displayed as.
