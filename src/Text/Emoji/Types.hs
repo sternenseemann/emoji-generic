@@ -4,7 +4,6 @@
 -}
 
 
-{-# LANGUAGE TemplateHaskell #-}
 module Text.Emoji.Types where
 
 import           Data.Char (toLower)
@@ -16,7 +15,7 @@ import           GHC.Word  (Word32 ())
 data EmojiStyle
   = Emoji
   | Text
-  deriving Show
+  deriving (Show, Eq)
 
 -- | Describes how common an emoji is.
 -- See http://www.unicode.org/reports/tr51/index.html#Emoji_Levels
@@ -24,7 +23,7 @@ data EmojiLevel
   = L1
   | L2
   | NA
-  deriving Show
+  deriving (Show, Eq)
 
 -- | Describes if and how the emoji can be
 -- used as modifier.
@@ -34,7 +33,7 @@ data EmojiModifierStatus
   | Primary
   | Secondary
   | None
-  deriving (Show)
+  deriving (Show, Eq)
 
 -- | Represents the source(s) the emoji came from.
 -- The Unicode standard created an universal encoding
@@ -47,7 +46,7 @@ data EmojiSource
   | JCarrier
   | WDings
   | X -- FIXME: Long Name?
-  deriving (Show)
+  deriving (Show, Eq)
 
 -- | An associative list to hold relations
 -- between a string and an element of type a
@@ -93,4 +92,4 @@ data Emoji = MkEmoji
   , _emojiSources  :: EmojiSources        -- ^ Where the emoji originates.
   , _version       :: String              -- ^ Version the character was introduced.
   , _name          :: String              -- ^ The Name of the character
-  } deriving Show
+  } deriving (Show, Eq)
