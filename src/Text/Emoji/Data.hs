@@ -8,7 +8,6 @@ unicode consortium.
 -}
 
 
-{-# LANGUAGE OverloadedStrings #-}
 module Text.Emoji.Data where
 
 import           Text.Emoji.Types
@@ -21,6 +20,11 @@ import           Data.Maybe          (fromJust, isJust, catMaybes)
 import           Text.Parsec
 import           Text.Parsec.String
 import           Numeric             (readHex)
+
+
+-- | Runs the parser on the specified data file.
+parseDataFile :: FilePath -> IO (Either ParseError [Either String Emoji])
+parseDataFile path = parseFromFile emojiDataFile path
 
 -- | Parses the entire emoji-data.txt file.
 -- Left String is a comment line.
