@@ -16,11 +16,8 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Text.Emoji.Types
+  exposed-modules:     Text.Emoji
                      , Text.Emoji.Data
-                     , Text.Emoji.String
-                     , Text.Emoji.Text
-                     , Text.Emoji.Emojis
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base

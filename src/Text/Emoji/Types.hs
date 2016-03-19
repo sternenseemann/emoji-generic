@@ -4,7 +4,19 @@
 -}
 
 
-module Text.Emoji.Types where
+module Text.Emoji.Types
+  ( EmojiStyle (..)
+  , EmojiLevel (..)
+  , EmojiModifierStatus (..)
+  , EmojiSource (..)
+  , EmojiSources (..)
+  , Emoji (..)
+  , ParserAssoc (..)
+  , emojiLevels
+  , emojiSources
+  , emojiModifierStati
+  , emojiStyles
+    ) where
 
 import           Data.Char (toLower)
 import           Data.Word (Word32 ())
