@@ -1,5 +1,5 @@
-{ mkDerivation, attoparsec, base, file-embed, stdenv, tasty
-, tasty-smallcheck, text, utf8-light
+{ mkDerivation, attoparsec, base, file-embed, smallcheck, stdenv
+, tasty, tasty-hunit, tasty-smallcheck, text, utf8-light
 }:
 mkDerivation {
   pname = "emoji-generic";
@@ -8,7 +8,9 @@ mkDerivation {
   libraryHaskellDepends = [
     attoparsec base file-embed text utf8-light
   ];
-  testHaskellDepends = [ tasty tasty-smallcheck ];
+  testHaskellDepends = [
+    base smallcheck tasty tasty-hunit tasty-smallcheck
+  ];
   description = "A generic Emoji library";
   license = stdenv.lib.licenses.lgpl3;
 }
