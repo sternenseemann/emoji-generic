@@ -11,8 +11,9 @@ import           Text.Emoji.Types
 
 import           Data.Text         (Text (), pack)
 
--- | Ouputs the given Emoji into Text.
 -- Uses the implementation of Text.Emoji.String
 -- since Text uses Chars, too.
+
+-- | Ouputs the given Emoji into Text.
 emojiToText :: Emoji -> Text
 emojiToText = pack . emojiToString

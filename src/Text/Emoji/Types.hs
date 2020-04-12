@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-|
   Module:      Text.Emoji.Types
   Description: Basic types and abstractions of emoji
@@ -5,21 +6,42 @@
 
 
 module Text.Emoji.Types
-  ( EmojiStyle (..)
-  , EmojiLevel (..)
-  , EmojiModifierStatus (..)
+  ( EmojiVersion (..)
+  , EmojiStyle (..)
+  , EmojiQualification (..)
+  , EmojiStatus (..)
+  , EmojiModifier (..)
   , EmojiSource (..)
-  , EmojiSources (..)
   , Emoji (..)
-  , ParserAssoc (..)
-  , emojiLevels
-  , emojiSources
-  , emojiModifierStati
-  , emojiStyles
-    ) where
+  ) where
 
-import           Data.Char (toLower)
-import           Data.Word (Word32 ())
+import Data.Word (Word32 ())
+import GHC.Generics
+
+data EmojiVersion
+  = NoEmojiVersion (Maybe Integer) -- ^ Not applicable. Maybe may contain Unicode Version.
+  | EmojiVersion Integer Integer   -- ^ @EmojiVersion Major Minor@
+  deriving (Show, Eq, Generic)
+
+instance Ord EmojiVersion where
+  compare (EmojiVersion maj1 min1) (EmojiVersion maj2 min2) = compare (maj1, min1) (maj2, min2)
+  compare (NoEmojiVersion Nothing) (NoEmojiVersion Nothing) = EQ
+  compare (NoEmojiVersion Nothing) _ = LT
+  compare _ (NoEmojiVersion Nothing) = GT
+  compare (NoEmojiVersion (Just v1)) (NoEmojiVersion (Just v2)) = compare v1 v2
+  compare (NoEmojiVersion _) (EmojiVersion _ _) = LT
+  compare (EmojiVersion _ _) (NoEmojiVersion _) = GT
+
+data EmojiQualification
+  = FullyQualified
+  | MinimallyQualified
+  | Unqualified
+  deriving (Show, Eq, Ord, Enum, Generic)
+
+data EmojiStatus
+  = EmojiStatusCharacter EmojiQualification
+  | EmojiStatusComponent
+  deriving (Show, Eq, Ord, Generic)
 
 -- | Represents the default style
 -- an emoji is displayed as.
@@ -27,25 +49,16 @@ import           Data.Word (Word32 ())
 data EmojiStyle
   = Emoji
   | Text
-  deriving (Show, Eq)
-
--- | Describes how common an emoji is.
--- See http://www.unicode.org/reports/tr51/index.html#Emoji_Levels
-data EmojiLevel
-  = L1
-  | L2
-  | NA
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord, Enum, Generic)
 
 -- | Describes if and how the emoji can be
 -- used as modifier.
 -- See: http://www.unicode.org/reports/tr51/index.html#Emoji_Modifiers
-data EmojiModifierStatus
+data EmojiModifier
   = Modifier
-  | Primary
-  | Secondary
-  | None
-  deriving (Show, Eq)
+  | ModifierBase
+  | ModifierSequence
+  deriving (Show, Eq, Ord, Enum, Generic)
 
 -- | Represents the source(s) the emoji came from.
 -- The Unicode standard created an universal encoding
@@ -57,51 +70,15 @@ data EmojiSource
   | ARIB
   | JCarrier
   | WDings
-  | X -- FIXME: Long Name?
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord, Enum, Generic)
 
--- | An associative list to hold relations
--- between a string and an element of type a
--- in order to convert strings into as.
-type ParserAssoc a = [(String, a)]
-
--- | Automatically generate an association tuple by
--- using show. Addtionally the result of show is applied to
--- f to do corrections of the derived show output.
-tupleShow :: Show a => (String -> String) -> a -> (String, a)
-tupleShow f x = (f . show $ x, x)
-
--- | Parser association list for EmojiStyle
-emojiStyles :: ParserAssoc EmojiStyle
-emojiStyles = map (tupleShow $ map toLower) [Emoji, Text]
-
--- | Parser association list for EmojiLevel
-emojiLevels :: ParserAssoc EmojiLevel
-emojiLevels = map (tupleShow id) [L1, L2, NA]
-
--- | Parser association list for EmojiModifierStatus
-emojiModifierStati :: ParserAssoc EmojiModifierStatus
-emojiModifierStati = map (tupleShow $ map toLower)
-  [Modifier, Primary, Secondary, None]
-
--- | Parser association list for EmojiSource
-emojiSources :: ParserAssoc EmojiSource
-emojiSources = [ ("z", ZDings), ("a", ARIB), ("j", JCarrier), ("w", WDings)
-               , ("x", X) ]
-
--- | Since a Emoji might come from multiple sources
--- these are represented as a list of EmojiSource.
--- Empty List means 'NA' (not applicable).
-type EmojiSources = [EmojiSource]
-
--- | Emoji holds all the information about an
--- emoji provided by emoji-data.txt
 data Emoji = MkEmoji
-  { _code          :: [Word32]            -- ^ The code of the unicode character.
-  , _defaultStyle  :: EmojiStyle          -- ^ The default display style.
-  , _emojiLevel    :: EmojiLevel          -- ^ Commonness for the character.
-  , _emojiModifier :: EmojiModifierStatus -- ^ Wether the emoji is a modifier.
-  , _emojiSources  :: EmojiSources        -- ^ Where the emoji originates.
-  , _version       :: String              -- ^ Version the character was introduced.
-  , _name          :: String              -- ^ The Name of the character
-  } deriving (Show, Eq)
+  { emojiCodePoints     :: [Word32]            -- ^ The code points of the unicode character.
+  , emojiDefaultStyle   :: EmojiStyle          -- ^ The default display style.
+  , emojiModifierStatus :: EmojiModifier       -- ^ Wether the emoji is a modifier.
+  , emojiSources        :: [EmojiSource]       -- ^ Where the emoji originates.
+  , emojiVersion        :: EmojiVersion        -- ^ Version the character was introduced.
+  , emojiStaticName     :: String              -- ^ The Name of the character
+  , emojiShortName      :: String              -- ^ CLDR short name of the character
+  , emojiExplicitGender :: Bool                -- ^ Wether this Emoji has an explicit gender
+  } deriving (Show, Eq, Ord, Generic)

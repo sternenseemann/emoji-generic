@@ -11,4 +11,4 @@ import           Codec.Binary.UTF8.Light (w2c)
 
 -- | Outputs a String for the given Emoji.
 emojiToString :: Emoji -> String
-emojiToString = map w2c . _code
+emojiToString = map w2c . emojiCodePoints
