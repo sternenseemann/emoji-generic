@@ -12,7 +12,7 @@ import Prelude hiding (takeWhile)
 import Text.Emoji.Types
 
 import Control.Applicative ((<|>))
-import Data.Attoparsec.Text (Parser (..), takeWhile1, takeWhile, string
+import Data.Attoparsec.Text (Parser (..), takeWhile1, takeWhile, string, choice
                             , notInClass, skipWhile, skipMany, isHorizontalSpace
                             , decimal, hexadecimal, char, many1, endOfLine)
 import Data.Text (Text)
@@ -69,11 +69,11 @@ emojiTestGroup maxLevel = do
 
   let groupParser =
         if maxLevel == EmojiTestGroup
-          then emojiTestGroup EmojiTestSubgroup
-          else fail "fails always"
+          then [ emojiTestGroup EmojiTestSubgroup ]
+          else []
 
-  groupEntries <- many1
-    (groupParser <|> emojiTestEntryLine <|> emojiTestCommentLine)
+  groupEntries <- many1 . choice $
+    groupParser ++ [ emojiTestEntryLine, emojiTestCommentLine ]
 
   pure $ Group EmojiTestGroup name groupEntries
 
