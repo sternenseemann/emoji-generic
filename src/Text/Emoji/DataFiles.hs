@@ -16,6 +16,7 @@ import Data.Attoparsec.Text (Parser (..), takeWhile1, takeWhile, string
                             , notInClass, skipWhile, skipMany, isHorizontalSpace
                             , decimal, hexadecimal, char, many1, endOfLine)
 import Data.Text (Text)
+import qualified Data.Text as T
 import Data.Word (Word32)
 
 type EmojiTest = [EmojiTestEntry]
@@ -66,11 +67,13 @@ emojiTestGroup maxLevel = do
   name <- takeWhile1 notEol
   skipMany endOfLine
 
-  let addMiddleParser = if maxLevel == EmojiTestGroup
-                          then (<|> emojiTestGroup EmojiTestSubgroup)
-                          else id
+  let groupParser =
+        if maxLevel == EmojiTestGroup
+          then emojiTestGroup EmojiTestSubgroup
+          else fail "fails always"
+
   groupEntries <- many1
-    (addMiddleParser emojiTestEntryLine <|> emojiTestCommentLine)
+    (groupParser <|> emojiTestEntryLine <|> emojiTestCommentLine)
 
   pure $ Group EmojiTestGroup name groupEntries
 
@@ -109,9 +112,13 @@ emojiTestEntryLine = do
   pure $ Entry codePoints status version shortName
 
 emojiTestCommentLine :: Parser EmojiTestEntry
-emojiTestCommentLine = char '#' >> skipSpace >>
-  (((string "group:" <|> string "subgroup:") >> fail "group, not comment") <|>
-    (takeWhile notEol <* skipMany endOfLine) >>= pure . Comment)
+emojiTestCommentLine = do
+  char '#'
+  skipSpace
+  text <- takeWhile notEol <* skipMany endOfLine
+  if "group:" `T.isPrefixOf` text || "subgroup:" `T.isPrefixOf` text
+    then fail "group, not comment"
+    else pure $ Comment text
 
 emojiTestFile :: Parser EmojiTest
 emojiTestFile = many1 $
