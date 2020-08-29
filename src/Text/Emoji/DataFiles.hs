@@ -12,7 +12,7 @@ import Prelude hiding (takeWhile)
 import Text.Emoji.Types
 
 import Control.Applicative ((<|>))
-import Data.Attoparsec.Text (Parser (..), takeWhile1, takeWhile, string, choice
+import Data.Attoparsec.Text (Parser (), takeWhile1, takeWhile, string, choice
                             , notInClass, skipWhile, skipMany, isHorizontalSpace
                             , decimal, hexadecimal, char, many1, endOfLine)
 import Data.Text (Text)
@@ -57,11 +57,11 @@ statusColumn =
 
 emojiTestGroup :: EmojiTestGroupLevel -> Parser EmojiTestEntry
 emojiTestGroup maxLevel = do
-  char '#'
+  _ <- char '#'
   skipSpace
 
-  string $ groupLevelText maxLevel
-  char ':'
+  _ <- string $ groupLevelText maxLevel
+  _ <- char ':'
   skipSpace
 
   name <- takeWhile1 notEol
@@ -79,9 +79,9 @@ emojiTestGroup maxLevel = do
 
 emojiVersionColumn :: Parser EmojiVersion
 emojiVersionColumn = do
-  char 'E'
+  _ <- char 'E'
   major <- decimal
-  char '.'
+  _ <- char '.'
   minor <- decimal
   pure $ case major of
            0 -> case minor of
@@ -97,11 +97,11 @@ emojiTestEntryLine = do
   codePoints <- codePointsColumn
   skipSpace
 
-  string "; "
+  _ <- string "; "
   status <- statusColumn
   skipSpace
 
-  string "# "
+  _ <- string "# "
   skipWhile (notInClass "E")
   version <- emojiVersionColumn
   skipSpace
@@ -113,7 +113,7 @@ emojiTestEntryLine = do
 
 emojiTestCommentLine :: Parser EmojiTestEntry
 emojiTestCommentLine = do
-  char '#'
+  _ <- char '#'
   skipSpace
   text <- takeWhile notEol <* skipMany endOfLine
   if "group:" `T.isPrefixOf` text || "subgroup:" `T.isPrefixOf` text
