@@ -5,6 +5,7 @@ module Main where
 import Test.Tasty
 import qualified Test.Tasty.SmallCheck as SC
 import qualified Test.Tasty.HUnit as HU
+import Test.Tasty.HUnit ((@?=), (@=?))
 import Test.SmallCheck.Series
 
 import Text.Emoji.Types
@@ -54,5 +55,4 @@ emojiVersionParserTest = do
   vt "E12.1" (EmojiVersion 12 1)
   vt "E13.0" (EmojiVersion 13 0)
   where vt :: Text -> EmojiVersion -> HU.Assertion
-        vt str exp = HU.assertBool (T.unpack str) . fromRight False $
-          (== exp) <$> parseOnly emojiVersionColumn str
+        vt str exp = parseOnly emojiVersionColumn str @?= Right exp
