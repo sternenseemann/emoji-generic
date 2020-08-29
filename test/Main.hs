@@ -14,7 +14,8 @@ import Text.Emoji.DataFiles
 import Data.Attoparsec.Text (parseOnly)
 import Data.Either (fromRight)
 import Data.Text (Text)
-import qualified Data.Text as T (unpack)
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
 
 main :: IO ()
 main = defaultMain tests
@@ -38,7 +39,9 @@ instance Monad m => Serial m EmojiVersion
 
 parserTests :: TestTree
 parserTests = testGroup "Emoji Data File Parser Tests"
-  [ HU.testCase "EmojiVersion Parser parses all versions up till now correctly" emojiVersionParserTest ]
+  [ HU.testCase "EmojiVersion parser parses all versions up till now correctly" emojiVersionParserTest
+  , HU.testCase "emoji-test.txt parser collects all entries" emojiTestParserLinesTest
+  ]
 
 emojiVersionParserTest :: HU.Assertion
 emojiVersionParserTest = do
@@ -56,3 +59,18 @@ emojiVersionParserTest = do
   vt "E13.0" (EmojiVersion 13 0)
   where vt :: Text -> EmojiVersion -> HU.Assertion
         vt str exp = parseOnly emojiVersionColumn str @?= Right exp
+
+-- | Helper Function that counts number of lines used to parse 'EmojiTest'.
+--   Useful to check against LoC of @emoji-test.txt@ for parser sanity check.
+countLines :: EmojiTest -> Int
+countLines ((Group _ _ x):xs) = 1 + countLines x + countLines xs
+countLines ((Comment _):xs) = 1 + countLines xs
+countLines ((Entry _ _ _ _):xs) = 1 + countLines xs
+countLines [] = 0
+
+emojiTestParserLinesTest :: HU.Assertion
+emojiTestParserLinesTest =
+  T.readFile "./data/emoji-test.txt" >>= \emojiTestTxt ->
+    let lines = countLines <$> parseOnly emojiTestFile emojiTestTxt
+        expectedLines = length . filter (/= "") $ T.lines emojiTestTxt
+     in lines @?= Right expectedLines

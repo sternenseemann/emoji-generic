@@ -123,11 +123,3 @@ emojiTestCommentLine = do
 emojiTestFile :: Parser EmojiTest
 emojiTestFile = many1 $
   emojiTestGroup EmojiTestGroup <|> emojiTestEntryLine <|> emojiTestCommentLine
-
--- | Helper Function that counts number of lines used to parse 'EmojiTest'.
---   Useful to check against LoC of @emoji-test.txt@ for parser sanity check.
-countLines :: EmojiTest -> Integer
-countLines ((Group _ _ x):xs) = 1 + countLines x + countLines xs
-countLines ((Comment _):xs) = 1 + countLines xs
-countLines ((Entry _ _ _ _):xs) = 1 + countLines xs
-countLines [] = 0
