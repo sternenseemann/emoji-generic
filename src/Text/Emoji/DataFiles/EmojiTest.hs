@@ -22,6 +22,7 @@ module Text.Emoji.DataFiles.EmojiTest
     -- * Attoparsec parsers
   , emojiVersionColumn
   , emojiTestFile
+  , manyEmojiTestEntries
   ) where
 
 import Prelude hiding (takeWhile)
@@ -31,7 +32,7 @@ import Text.Emoji.Types
 import Control.Applicative ((<|>))
 import Data.Attoparsec.Text (Parser (), takeWhile1, takeWhile, string, choice
                             , notInClass, skipWhile, skipMany, isHorizontalSpace
-                            , decimal, hexadecimal, char, many1, endOfLine)
+                            , decimal, hexadecimal, char, many1, endOfLine, endOfInput)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Word (Word32)
@@ -136,7 +137,11 @@ emojiTestCommentLine = do
     then fail "group, not comment"
     else pure $ Comment text
 
--- | Parses an entire @emoji-test.txt@ file or a subset of it.
+-- | Parses an entire @emoji-test.txt@ file and consumes the end of input.
 emojiTestFile :: Parser EmojiTest
-emojiTestFile = many1 $
+emojiTestFile = manyEmojiTestEntries <* endOfInput
+
+-- | Parses one or more 'EmojiTestEntries'.
+manyEmojiTestEntries :: Parser EmojiTest
+manyEmojiTestEntries = many1 $
   emojiTestGroup EmojiTestGroup <|> emojiTestEntryLine <|> emojiTestCommentLine
