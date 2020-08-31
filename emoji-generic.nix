@@ -9,7 +9,7 @@ mkDerivation {
     attoparsec base file-embed text utf8-light
   ];
   testHaskellDepends = [
-    base smallcheck tasty tasty-hunit tasty-smallcheck
+    attoparsec base smallcheck tasty tasty-hunit tasty-smallcheck text
   ];
   description = "A generic Emoji library";
   license = stdenv.lib.licenses.lgpl3;
