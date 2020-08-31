@@ -9,7 +9,7 @@ import Test.Tasty.HUnit ((@?=), (@=?))
 import Test.SmallCheck.Series
 
 import Text.Emoji.Types
-import Text.Emoji.DataFiles
+import Text.Emoji.DataFiles.EmojiTest
 
 import Data.Attoparsec.Text (parseOnly)
 import Data.Either (fromRight)

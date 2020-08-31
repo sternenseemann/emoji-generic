@@ -17,7 +17,7 @@ extra-source-files:  README.md
 
 library
   exposed-modules:     Text.Emoji
-                     , Text.Emoji.DataFiles
+                     , Text.Emoji.DataFiles.EmojiTest
                      , Text.Emoji.Types
                      , Text.Emoji.String
                      , Text.Emoji.Text

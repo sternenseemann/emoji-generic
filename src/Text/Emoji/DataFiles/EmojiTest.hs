@@ -1,11 +1,28 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-|
-  Module:      Text.Emoji.Data
-  Description:
+  Module:      Text.Emoji.DataFiles.EmojiTest
+  Description: Parsers and Utilities related to the @emoji-test.txt@ file.
+
+  This module can be utilized to parse the @emoji-test.txt@ data file
+  provided by the Unicode Consortium. This file contains a representation
+  of a more or less typical emoji keyboard which means you get:
+
+  * a list of valid emojis (qualified) plus unqualified ones,
+    emoji components, you can expect to find in the wild or
+    may want to input
+  * an organization of those into groups and subgroups (like in a keyboard)
 -}
 
 
-module Text.Emoji.DataFiles where
+module Text.Emoji.DataFiles.EmojiTest
+  ( -- * Representation of the parsed file
+    EmojiTest ()
+  , EmojiTestEntry (..)
+  , EmojiTestGroupLevel (..)
+    -- * Attoparsec parsers
+  , emojiVersionColumn
+  , emojiTestFile
+  ) where
 
 import Prelude hiding (takeWhile)
 
@@ -35,9 +52,6 @@ data EmojiTestGroupLevel
 groupLevelText :: EmojiTestGroupLevel -> Text
 groupLevelText EmojiTestGroup = "group"
 groupLevelText EmojiTestSubgroup = "subgroup"
-
-notSpace :: Char -> Bool
-notSpace = notInClass " \t"
 
 notEol :: Char -> Bool
 notEol = notInClass "\n"
@@ -77,6 +91,8 @@ emojiTestGroup maxLevel = do
 
   pure $ Group EmojiTestGroup name groupEntries
 
+-- | Parses the textual representation of an 'EmojiVersion' as found
+--   in @emoji-test.txt@.
 emojiVersionColumn :: Parser EmojiVersion
 emojiVersionColumn = do
   _ <- char 'E'
@@ -120,6 +136,7 @@ emojiTestCommentLine = do
     then fail "group, not comment"
     else pure $ Comment text
 
+-- | Parses an entire @emoji-test.txt@ file or a subset of it.
 emojiTestFile :: Parser EmojiTest
 emojiTestFile = many1 $
   emojiTestGroup EmojiTestGroup <|> emojiTestEntryLine <|> emojiTestCommentLine
