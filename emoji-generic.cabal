@@ -38,7 +38,7 @@ test-suite test
   hs-source-dirs:      test
   build-depends:       base >=4.13 && <4.15
                      , emoji-generic
-                     , tasty ^>=1.2.3
+                     , tasty >=1.2.3 && <1.5
                      , tasty-smallcheck ^>=0.8.1
                      , smallcheck >=1.1.5 && <1.4
                      , tasty-hunit ^>=0.10.0.2
