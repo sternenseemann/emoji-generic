@@ -1,4 +1,4 @@
-{ mkDerivation, attoparsec, base, file-embed, smallcheck, stdenv
+{ mkDerivation, attoparsec, base, file-embed, lib, smallcheck
 , tasty, tasty-hunit, tasty-smallcheck, text, utf8-light
 }:
 mkDerivation {
@@ -12,5 +12,5 @@ mkDerivation {
     attoparsec base smallcheck tasty tasty-hunit tasty-smallcheck text
   ];
   description = "A generic Emoji library";
-  license = stdenv.lib.licenses.lgpl3;
+  license = lib.licenses.lgpl3Only;
 }
