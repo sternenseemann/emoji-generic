@@ -43,5 +43,5 @@ test-suite test
                      , smallcheck >=1.1.5 && <1.4
                      , tasty-hunit ^>=0.10.0.2
                      , attoparsec >=0.13 && < 0.15
-                     , text ^>=1.2
+                     , text >=1.2 && < 2.1
   default-language:    Haskell2010
