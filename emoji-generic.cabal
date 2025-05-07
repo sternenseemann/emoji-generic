@@ -24,7 +24,7 @@ library
   -- other-modules:
   -- other-extensions:
   build-depends:       base >=4.13 && <5
-                     , text >=1.2 && < 2.1
+                     , text >=1.2 && < 2.2
                      , attoparsec >=0.13.2.0 && < 0.15
                      , file-embed
                      , utf8-light ^>=0.4.2
@@ -38,7 +38,7 @@ test-suite test
   hs-source-dirs:      test
   build-depends:       base >=4.13 && <5
                      , emoji-generic
-                     , tasty >=1.2.3 && <1.5
+                     , tasty >=1.2.3 && <1.6
                      , tasty-smallcheck ^>=0.8.1
                      , smallcheck >=1.1.5 && <1.4
                      , tasty-hunit ^>=0.10.0.2
